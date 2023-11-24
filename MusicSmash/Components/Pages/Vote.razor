@@ -1,0 +1,52 @@
+﻿@page "/vote"
+@using MusicSmash.Controllers
+@using MusicSmash.Models
+@rendermode InteractiveServer
+@inject RoundController roundController
+@inject VoteController voteController 
+
+
+<MusicSmash.Components.Sub_Components.VS LeftAlbum="GetLeftAlbum()" RightAlbum="GetRightAlbum()" OnVote="VoteAlbum"></MusicSmash.Components.Sub_Components.VS>
+
+
+@code 
+{
+    public Round CurrentRound { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        var oldRound = roundController.GetOldRound();
+        CurrentRound = roundController.GetNextRound(oldRound);
+        return base.OnInitializedAsync();
+    }
+
+    private Game GetNextGame()
+    {
+        var nextGame = CurrentRound.Games.FirstOrDefault(g => g.Winner is null);
+
+        if(nextGame is not null)
+            return nextGame;
+
+        //We finished the round
+        roundController.SaveRound(CurrentRound);
+        CurrentRound = roundController.GetNextRound(CurrentRound);
+
+        return GetNextGame();
+    }
+
+    public Album GetLeftAlbum()
+    {
+        return GetNextGame().Left;
+    }
+
+    public Album GetRightAlbum()
+    {
+        return GetNextGame().Right;
+    }
+
+    public void VoteAlbum(Album voted)
+    {
+        GetNextGame().Winner = voted;
+        StateHasChanged();
+    }
+}
