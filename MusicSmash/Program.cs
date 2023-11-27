@@ -14,6 +14,8 @@ builder.Services.AddScoped<RoundService>();
 builder.Services.AddScoped<RoundController>();
 builder.Services.AddScoped<VoteController>();
 
+builder.Services.AddControllers();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -28,6 +30,8 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
+
+app.MapControllers();
 
 app.MapRazorComponents<App>()
 	.AddInteractiveServerRenderMode();
