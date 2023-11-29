@@ -1,5 +1,6 @@
 using MusicSmash.Components;
 using MusicSmash.Controllers;
+using MusicSmash.Controllers.Api.Spotify;
 using MusicSmash.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,8 @@ builder.Services.AddScoped<RoundService>();
 
 builder.Services.AddScoped<RoundController>();
 builder.Services.AddScoped<VoteController>();
+
+builder.Services.AddScoped<Api>();
 
 builder.Services.AddControllers();
 

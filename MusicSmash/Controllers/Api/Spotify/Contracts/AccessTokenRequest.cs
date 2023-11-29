@@ -12,5 +12,15 @@ namespace MusicSmash.Controllers.Api.Spotify.Contracts
 
         [JsonPropertyName("redirect_uri")]
         public required string RedirectUri { get; set; }
+
+        public IDictionary<string, string> ToDictionary()
+        {
+            return new Dictionary<string, string>
+            {
+                { "code", Code },
+                { "redirect_uri", RedirectUri },
+                { "grant_type", GrantType },
+            };
+        }
     }
 }

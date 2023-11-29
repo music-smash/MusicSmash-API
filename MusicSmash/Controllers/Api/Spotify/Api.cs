@@ -27,8 +27,10 @@ namespace MusicSmash.Controllers.Api.Spotify
 
                 var auth = UTF8Encoding.UTF8.GetBytes($"{clientId}:{clientSecret}");
                 client.DefaultRequestHeaders.Authorization = new ("Basic", Convert.ToBase64String(auth));
-                client.DefaultRequestHeaders.Add("Content-Type", "application/x-www-form-urlencoded");
-                var response = await client.PostAsJsonAsync(endpoint, request);
+                
+                var httpRequest = new FormUrlEncodedContent(request.ToDictionary());
+
+                var response = await client.PostAsync(endpoint, httpRequest);
 
                 response.EnsureSuccessStatusCode();
 

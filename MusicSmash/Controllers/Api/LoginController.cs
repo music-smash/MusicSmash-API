@@ -14,32 +14,27 @@ namespace MusicSmash.Controllers.Api
             _spotifyAPI = spotifyAPI;
         }
 
-        public LoginController()
-        {
-                
-        }
-
         [Route("/callback")]
         [HttpGet]
-        public async void Callback(
-                            [FromRoute] string state,
-                            [FromRoute] string code,
-                            [FromRoute] string error)
+        public async Task<RedirectResult> Callback(
+                            [FromQuery] string state = null,
+                            [FromQuery] string code = null,
+                            [FromQuery] string error = null)
         {
-            if (state is null || error is not null)
-                return;
+            if (code is null || error is not null)
+                return Redirect("/home");
 
             //Get token
             var result = await _spotifyAPI.AccessTokenAsync(new()
                 { 
                     GrantType = "authorization_code",
                     Code = code,
-                    RedirectUri = Request.GetEncodedUrl()
+                    RedirectUri = Request.GetEncodedUrl().Split('?')[0]
             });
 
             Console.WriteLine(result.AccessToken);
             // set token on local
-            Redirect("/");
+            return Redirect("/");
         }
 
     }
