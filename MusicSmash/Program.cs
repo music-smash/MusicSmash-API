@@ -18,6 +18,12 @@ builder.Services.AddScoped<VoteController>();
 builder.Services.AddScoped<Api>();
 
 builder.Services.AddControllers();
+builder.Services.AddCookiePolicy(configureOptions =>
+{
+    configureOptions.MinimumSameSitePolicy = SameSiteMode.Lax;
+    configureOptions.HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always;
+    configureOptions.Secure = CookieSecurePolicy.Always;
+});
 
 var app = builder.Build();
 

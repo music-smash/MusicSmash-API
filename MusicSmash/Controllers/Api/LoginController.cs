@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using MusicSmash.Controllers.Api.Spotify;
+using System.Net;
 
 namespace MusicSmash.Controllers.Api
 {
@@ -16,13 +17,14 @@ namespace MusicSmash.Controllers.Api
 
         [Route("/callback")]
         [HttpGet]
-        public async Task<RedirectResult> Callback(
-                            [FromQuery] string state = null,
-                            [FromQuery] string code = null,
-                            [FromQuery] string error = null)
+        public async Task<ActionResult> Callback(
+                            [FromQuery] string state = "",
+                            [FromQuery] string code = "",
+                            [FromQuery] string error = "")
         {
-            if (code is null || error is not null)
-                return Redirect("/home");
+            if (error is not "")
+                return Redirect("/");
+
 
             //Get token
             var result = await _spotifyAPI.AccessTokenAsync(new()
@@ -30,11 +32,18 @@ namespace MusicSmash.Controllers.Api
                     GrantType = "authorization_code",
                     Code = code,
                     RedirectUri = Request.GetEncodedUrl().Split('?')[0]
+                });
+
+            //Console.WriteLine(result.AccessToken);
+            Response.Cookies.Append("token", result.AccessToken, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                IsEssential = true,
+                SameSite = SameSiteMode.Lax
             });
 
-            Console.WriteLine(result.AccessToken);
-            // set token on local
-            return Redirect("/");
+            return Redirect("/vote");
         }
 
     }
