@@ -1,17 +1,19 @@
 ﻿@using MusicSmash.Models
 @inherits ComponentBase
 
+@* Show the 2 albums, it should suggest the user to pick his favourite, it all should have a spotify feel and look *@
+@* The user should be able to click on the album cover to listen to the album on spotify *@
+@* The backroun should be full green green and full black respectively on the left nad on the right *@
+
+
+
 <div class="album-card">
-    <div class="album-cover">
+    <div class="album-cover" @onclick="() => OnVote(LeftAlbum)">
         <img src="@LeftAlbum.Cover" alt="@LeftAlbum.Name" />
     </div>
     <div class="vs-text">VS</div>
-    <div class="album-cover">
+    <div class="album-cover" @onclick="() => OnVote(RightAlbum)">
         <img src="@RightAlbum.Cover" alt="@RightAlbum.Name" />
-    </div>
-    <div class="vote-buttons">
-        <button class="btn btn-hot" @onclick="() => OnVote(LeftAlbum)">Hot</button>
-        <button class="btn btn-not" @onclick="() => OnVote(RightAlbum)">Not</button>
     </div>
 </div>
 
@@ -23,57 +25,58 @@
 }
 
 <style>
-    .album-card {
+      .album-card {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
+        justify-content: space-between;
         align-items: center;
-        margin: 20px;
-        padding: 20px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        background-color: #fff;
+        padding: 1rem;
+        width: 100%;
+        flex: 1 1 auto;
+        background-color: #121212;
+        border-radius: 10px;
     }
-
     .album-cover {
-        margin-bottom: 10px;
+        width: 150px;
+        height: 150px;
+        border-radius: 10px;
     }
-
-        .album-cover img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-        }
-
+    .album-cover img {
+        width: 100%;
+        height: 100%;
+        border-radius: 10px;
+        border-color: #1DB954;
+    }
     .vs-text {
-        font-size: 1.2em;
+        font-size: 4rem;
         font-weight: bold;
-        margin: 10px 0;
+        color: #1DB954;
     }
-
     .vote-buttons {
         display: flex;
-        justify-content: space-around;
-        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+        width: 200px;
     }
-
     .btn {
-        cursor: pointer;
-        padding: 10px 20px;
-        font-size: 1em;
+        width: 90px;
+        height: 60px;
+        font-size: 1rem;
+        font-weight: bold;
+        border-radius: 10px;
         border: none;
-        border-radius: 5px;
-        transition: background-color 0.3s ease;
+        color: white;
     }
-
     .btn-hot {
-        background-color: #1db954;
-        color: #fff;
+        background-color: #1DB954;
     }
-
+    .btn-hot:hover {
+        background-color: #1ED760;
+    }
     .btn-not {
-        background-color: #d9534f;
-        color: #fff;
+        background-color: #121212;
     }
-
+    .btn-not:hover {
+        background-color: #282828;
+    }
 </style>

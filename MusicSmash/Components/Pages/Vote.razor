@@ -1,23 +1,47 @@
 ﻿@page "/vote"
 @using MusicSmash.Controllers
+@using MusicSmash.Controllers.Api.Spotify
 @using MusicSmash.Models
 @rendermode InteractiveServer
 @inject RoundController roundController
 @inject VoteController voteController 
+@inject Api spotifyAPI
+@inject IHttpContextAccessor httpContext
 
+@if(isAuthenticated)
+{
+    <MusicSmash.Components.Sub_Components.VS LeftAlbum="GetLeftAlbum()" RightAlbum="GetRightAlbum()" OnVote="VoteAlbum"></MusicSmash.Components.Sub_Components.VS>
+}
+else
+{
+    @* redirect to / *@
+    <RedirectToPage Page="/"></RedirectToPage>
+}
 
-<MusicSmash.Components.Sub_Components.VS LeftAlbum="GetLeftAlbum()" RightAlbum="GetRightAlbum()" OnVote="VoteAlbum"></MusicSmash.Components.Sub_Components.VS>
 
 
 @code 
 {
     public Round CurrentRound { get; set; }
 
+    public bool isAuthenticated => ShouldRender().Result;
+
     protected override Task OnInitializedAsync()
     {
         var oldRound = roundController.GetOldRound();
         CurrentRound = roundController.GetNextRound(oldRound);
         return base.OnInitializedAsync();
+    }
+
+    protected async Task<bool> ShouldRender()
+    {
+        string token = string.Empty;
+        if(!httpContext?.HttpContext?.Request.Cookies.TryGetValue("token", out token) ?? false)
+            return false;
+
+        var result = await spotifyAPI.GetUserProfileAsync(token).ConfigureAwait(false);
+
+        return result.Product == "premium";
     }
 
     private Game GetNextGame()

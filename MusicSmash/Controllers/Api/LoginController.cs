@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MusicSmash.Controllers.Api.Spotify;
 using System.Net;
+using System.Security.Cryptography.X509Certificates;
 
 namespace MusicSmash.Controllers.Api
 {
@@ -44,6 +45,24 @@ namespace MusicSmash.Controllers.Api
             });
 
             return Redirect("/vote");
+        }
+
+        [Route("/shouldVote")]
+        [HttpPost]
+        public async Task<ActionResult> ShouldVote()
+        {
+            //grab the cookie
+            var token = Request.Cookies["token"];
+
+            if (token is null)
+                return Unauthorized();
+
+            var response = await _spotifyAPI.GetUserProfileAsync(token);
+
+            if(response.Product != "premium")
+                return Unauthorized();
+
+            return Ok();
         }
 
     }

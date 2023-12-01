@@ -14,6 +14,9 @@ builder.Services.AddScoped<RoundService>();
 
 builder.Services.AddScoped<RoundController>();
 builder.Services.AddScoped<VoteController>();
+builder.Services.AddHttpClient();
+builder.Services.AddHttpContextAccessor();
+
 
 builder.Services.AddScoped<Api>();
 

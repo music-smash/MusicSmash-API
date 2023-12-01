@@ -37,5 +37,22 @@ namespace MusicSmash.Controllers.Api.Spotify
                 return await response.Content.ReadFromJsonAsync<Contracts.AccessTokenResponse>();
             }
         }
+
+
+        public async Task<Contracts.UserProfileResponse> GetUserProfileAsync(string token)
+        {
+            var endpoint = "https://api.spotify.com/v1/me";
+
+            using(var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new ("Bearer", token);
+
+                var response = await client.GetAsync(endpoint).ConfigureAwait(false);
+
+                response.EnsureSuccessStatusCode();
+
+                return await response.Content.ReadFromJsonAsync<Contracts.UserProfileResponse>();
+            }
+        }
     }
 }

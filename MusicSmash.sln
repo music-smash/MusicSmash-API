@@ -5,6 +5,12 @@ VisualStudioVersion = 17.6.33801.468
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicSmash", "MusicSmash\MusicSmash.csproj", "{F2724351-0DCE-49E2-9E2A-F505C1757D3B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicSmash.Contracts", "MusicSmash.Contracts\MusicSmash.Contracts.csproj", "{520982F6-BA6B-4067-A909-545F9DAD034E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicSmash.Score.Engine", "MusicSmash.Score.Engine\MusicSmash.Score.Engine.csproj", "{C916833E-9216-4D80-B82D-B986E9C3DFCD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicSmash.Score.Service", "MusicSmash.Score.Service\MusicSmash.Score.Service.csproj", "{48E130AB-B058-4A0A-A02D-BE0E579684B1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +21,18 @@ Global
 		{F2724351-0DCE-49E2-9E2A-F505C1757D3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2724351-0DCE-49E2-9E2A-F505C1757D3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2724351-0DCE-49E2-9E2A-F505C1757D3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{520982F6-BA6B-4067-A909-545F9DAD034E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{520982F6-BA6B-4067-A909-545F9DAD034E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{520982F6-BA6B-4067-A909-545F9DAD034E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{520982F6-BA6B-4067-A909-545F9DAD034E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C916833E-9216-4D80-B82D-B986E9C3DFCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C916833E-9216-4D80-B82D-B986E9C3DFCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C916833E-9216-4D80-B82D-B986E9C3DFCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C916833E-9216-4D80-B82D-B986E9C3DFCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48E130AB-B058-4A0A-A02D-BE0E579684B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48E130AB-B058-4A0A-A02D-BE0E579684B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48E130AB-B058-4A0A-A02D-BE0E579684B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48E130AB-B058-4A0A-A02D-BE0E579684B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
