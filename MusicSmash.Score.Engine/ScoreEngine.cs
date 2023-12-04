@@ -11,7 +11,7 @@ namespace MusicSmash.Score.Engine
     {
         public readonly int K = 24;
 
-        public ScoreEngine(int k)
+        public ScoreEngine(int k = 24)
         {
             K = k;
         }
