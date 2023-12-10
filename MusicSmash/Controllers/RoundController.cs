@@ -1,4 +1,5 @@
-﻿using MusicSmash.Models;
+﻿using MusicSmash.Controllers.Exceptions;
+using MusicSmash.Models;
 using MusicSmash.Services;
 using System.Security.Cryptography.Xml;
 
@@ -17,16 +18,29 @@ namespace MusicSmash.Controllers
 
 		public Round GetNextRound(Round previusRound)
 		{
-			return new Round()
+			try
 			{
-				Index = (previusRound?.Index ?? 0) + 1,
-				Games = _voteController.GetRandomCoupledAlbums(previusRound)
-					.Select((couple) => new Game()
-					{
-						Left = couple.left,
-						Right = couple.right
-					}).ToArray()
-			};
+                var albumPool = _voteController.GetRandomCoupledAlbums(previusRound);
+                return new Round()
+                {
+                    Index = (previusRound?.Index ?? 0) + 1,
+                    Games = albumPool
+                        .Select((couple) => new Game()
+                        {
+                            Left = couple.left,
+                            Right = couple.right
+                        }).ToArray()
+                };
+            }
+            catch (WinnerExceptions e)
+			{
+                return new Round()
+				{
+                    Index = (previusRound?.Index ?? 0) + 1,
+                    Games = new Game[] { FinishedGame.FromWinner(e.Winner) }
+                };
+			}
+
 		}
 
 		public Round GetOldRound()

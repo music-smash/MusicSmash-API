@@ -1,4 +1,5 @@
-﻿using MusicSmash.Extensions;
+﻿using MusicSmash.Controllers.Exceptions;
+using MusicSmash.Extensions;
 using MusicSmash.Models;
 using MusicSmash.Services;
 
@@ -24,6 +25,9 @@ namespace MusicSmash.Controllers
 			}
 
 			var albumPool = GetAlbums(previusRound);
+
+			if (albumPool.Length == 1)
+				throw new WinnerExceptions(albumPool[0]);
 
 			return Associate(albumPool.Shuffle().ToList()).ToList();
 		}
