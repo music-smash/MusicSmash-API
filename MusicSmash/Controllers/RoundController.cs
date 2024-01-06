@@ -7,19 +7,22 @@ namespace MusicSmash.Controllers
 {
 	public class RoundController
 	{
-        private readonly VoteController _voteController;
+        private readonly GameService _gameService;
         private readonly Events _eventsCollection;
         private readonly RoundService _roundService;
+        private readonly AlbumService _albumService;
 
-		public RoundController(VoteController voteController, RoundService roundService, Events eventsCollection)
-		{
-            this._voteController = voteController;
+        public RoundController(GameService gameService, RoundService roundService, Events eventsCollection, AlbumService albumService)
+        {
+            this._gameService = gameService;
             this._eventsCollection = eventsCollection;
             this._roundService = roundService;
-		}
+            this._albumService = albumService;
+        }
 
-        public Round GetNextRound(Round previusRound)
+        public Round GetRound()
         {
+            var previusRound = GetSavedRound();
             var nextRound = GetNextRoundInternal(previusRound);
             _eventsCollection.OnNewRoundLoaded(this, nextRound);
             return nextRound;
@@ -29,37 +32,41 @@ namespace MusicSmash.Controllers
 		{
 			try
 			{
-                var albumPool = _voteController.GetRandomCoupledAlbums(previusRound);
+                var albumsPool = GetAlbumsOfNextRound(previusRound);
+                var games = _gameService.GetRandomGameWithCoupledAlbums(albumsPool);
                 return new Round()
                 {
                     Index = (previusRound?.Index ?? 0) + 1,
-                    Games = albumPool
-                        .Select((couple) => new Game()
-                        {
-                            Left = couple.left,
-                            Right = couple.right
-                        }).ToArray()
+                    Games = games.ToArray()
                 };
             }
-            catch (WinnerExceptions e)
+            catch (WeHaveAWinnerExceptions e)
 			{
                 return new Round()
 				{
                     Index = (previusRound?.Index ?? 0) + 1,
-                    Games = new Game[] { FinishedGame.FromWinner(e.Winner) }
+                    Games = new Game[] { previusRound.Games[0] }
                 };
 			}
 
 		}
 
-		public Round GetOldRound()
+		private Round GetSavedRound()
 		{
-			return _roundService.GetRound(null);
+			return _roundService.GetSavedRound(null);
 		}
 
 		public void SaveRound(Round round)
 		{
 			_roundService.SaveRound(null, round);
 		}
-	}
+
+        private List<Album> GetAlbumsOfNextRound(Round round)
+        {
+            if (round == null) return _albumService.GetAlbums().ToList();
+
+            return round.Games.Where(g => g.IsFinished).Select(g => g.Winner).ToList();
+        }
+
+    }
 }

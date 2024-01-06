@@ -2,10 +2,11 @@
 @using MusicSmash.Components.Sub_Components
 @using MusicSmash.Controllers
 @using MusicSmash.Controllers.Api.Spotify
+@using MusicSmash.Controllers.Exceptions
 @using MusicSmash.Models
 @rendermode InteractiveServer
 @inject RoundController roundController
-@inject VoteController voteController 
+@inject GameController gameController 
 @inject Api spotifyAPI
 @inject IHttpContextAccessor httpContext
 @inject Events eventsCollectior
@@ -28,13 +29,15 @@ else
 @code 
 {
     public Round CurrentRound { get; set; }
+    public Game CurrentGame { get; set; }
 
     public bool isAuthenticated => ShouldRender().Result;
 
     protected override Task OnInitializedAsync()
     {
-        var oldRound = roundController.GetOldRound();
-        CurrentRound = roundController.GetNextRound(oldRound);
+        CurrentRound = roundController.GetRound();
+        GetNextGame();
+        StateHasChanged();
         return base.OnInitializedAsync();
     }
 
@@ -50,32 +53,29 @@ else
         return true;
     }
 
-    private Game GetNextGame()
+    private void GetNextGame()
     {
-        var nextGame = CurrentRound.Games.FirstOrDefault(g => g.Winner is null);
-
-        if(nextGame is not null)
-            return nextGame;
-
-        // Round finished
-        roundController.SaveRound(CurrentRound);
-        CurrentRound = roundController.GetNextRound(CurrentRound);
-        return GetNextGame();
+        try
+        {
+            CurrentGame = gameController.GetNextGame(CurrentRound);
+        }
+        catch (RoundFinishedException ex)
+        {
+            //Update round
+            roundController.SaveRound(CurrentRound);
+            CurrentRound = roundController.GetRound();
+            GetNextGame();
+        }
     }
 
-    public Album GetLeftAlbum()
-    {
-        return GetNextGame().Left;
-    }
+    public Album GetLeftAlbum() => CurrentGame?.Left ?? Album.NotDefined;
 
-    public Album GetRightAlbum()
-    {
-        return GetNextGame().Right;
-    }
+    public Album GetRightAlbum() => CurrentGame?.Right ?? Album.NotDefined;
 
     public void VoteAlbum(Album voted)
     {
-        GetNextGame().Winner = voted;
+        gameController.SetWinner(CurrentGame, voted);
+        GetNextGame();
         StateHasChanged();
     }
 }

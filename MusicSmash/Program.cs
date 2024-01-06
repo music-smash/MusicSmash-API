@@ -14,7 +14,8 @@ builder.Services.AddScoped<AlbumService>();
 builder.Services.AddScoped<RoundService>();
 
 builder.Services.AddScoped<RoundController>();
-builder.Services.AddScoped<VoteController>();
+builder.Services.AddScoped<GameController>();
+builder.Services.AddScoped<GameService>();
 builder.Services.AddScoped<Events>();
 builder.Services.AddHttpClient();
 builder.Services.AddHttpContextAccessor();
