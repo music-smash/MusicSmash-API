@@ -10,7 +10,7 @@
 
 @if(isAuthenticated)
 {
-    <MusicSmash.Components.Sub_Components.VS LeftAlbum="GetLeftAlbum()" RightAlbum="GetRightAlbum()" OnVote="VoteAlbum"></MusicSmash.Components.Sub_Components.VS>
+    <MusicSmash.Components.Sub_Components.VS LeftAlbum="GetLeftAlbum()" RightAlbum="GetRightAlbum()" OnVote="VoteAlbum" />
 }
 else
 {
@@ -40,8 +40,9 @@ else
             return false;
 
         var result = await spotifyAPI.GetUserProfileAsync(token).ConfigureAwait(false);
+        var isPremium = result.Product == "premium";
 
-        return result.Product == "premium";
+        return true;
     }
 
     private Game GetNextGame()
@@ -51,7 +52,7 @@ else
         if(nextGame is not null)
             return nextGame;
 
-        //We finished the round
+        // Round finished
         roundController.SaveRound(CurrentRound);
         CurrentRound = roundController.GetNextRound(CurrentRound);
 

@@ -23,7 +23,7 @@
         SpotifyLoginUri = "https://accounts.spotify.com/authorize?";
 
         queryParameters["client_id"] = configuration["spotify:client-id"];
-        queryParameters["scope"] = "user-read-private";
+        queryParameters["scope"] = "user-read-private user-read-email";
         queryParameters["redirect_uri"] = "https://127.0.0.1:7083/callback";
 
         foreach(var keyValue in queryParameters)
