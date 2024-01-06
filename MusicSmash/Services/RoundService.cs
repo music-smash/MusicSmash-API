@@ -11,7 +11,7 @@ namespace MusicSmash.Services
 
 		public void SaveRound(UserId userId, Round round)
 		{
-			throw new NotImplementedException();
+			return;
 		}
 
 	}
