@@ -1,4 +1,5 @@
 ﻿@page "/vote"
+@using MusicSmash.Components.Sub_Components
 @using MusicSmash.Controllers
 @using MusicSmash.Controllers.Api.Spotify
 @using MusicSmash.Models
@@ -11,12 +12,15 @@
 
 @if(isAuthenticated)
 {
-    <MusicSmash.Components.Sub_Components.VS LeftAlbum="GetLeftAlbum()" RightAlbum="GetRightAlbum()" OnVote="VoteAlbum" />
+    <VS 
+        LeftAlbum="GetLeftAlbum()" 
+        RightAlbum="GetRightAlbum()" 
+        OnVote="VoteAlbum" 
+    />
 }
 else
 {
-    @* redirect to / *@
-    <RedirectToPage Page="/"></RedirectToPage>
+    <RedirectToPage Page="/" />
 }
 
 

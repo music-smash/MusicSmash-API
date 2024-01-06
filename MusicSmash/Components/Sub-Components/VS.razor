@@ -1,21 +1,26 @@
 ﻿@using MusicSmash.Models
 @inherits ComponentBase
 
-@* Show the 2 albums, it should suggest the user to pick his favourite, it all should have a spotify feel and look *@
-@* The user should be able to click on the album cover to listen to the album on spotify *@
-@* The backroun should be full green green and full black respectively on the left nad on the right *@
 
-
-
-<div class="album-card">
-    <div class="album-cover" @onclick="() => OnVote(LeftAlbum)">
-        <img src="@LeftAlbum.Cover" alt="@LeftAlbum.Name" />
+<div class="row">
+    <div class="col text-center bg-warning column">
+        <div class="d-flex flex-column">
+            <div class="album-cover" @onclick="() => OnVote(LeftAlbum)">
+                <img src="@LeftAlbum.Cover" alt="@LeftAlbum.Name" />
+            </div>
+        </div>
     </div>
-    <div class="vs">
-        VS
+    <div class="col-3 text-center bg-info">
+        <div class="d-flex flex-column">
+            <p class="fs-1">VS</p>
+        </div>
     </div>
-    <div class="album-cover" @onclick="() => OnVote(RightAlbum)">
-        <img src="@RightAlbum.Cover" alt="@RightAlbum.Name" />
+    <div class="col text-center bg-warning">
+        <div class="d-flex flex-column">
+            <div class="album-cover" @onclick="() => OnVote(RightAlbum)">
+                <img src="@RightAlbum.Cover" alt="@RightAlbum.Name" />
+            </div>
+        </div>
     </div>
 </div>
 
@@ -25,13 +30,3 @@
     [Parameter] public Album RightAlbum { get; set; }
     [Parameter] public Action<Album> OnVote { get; set; }
 }
-
-<style>
-    .album-card {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-evenly;
-        align-items: center
-    }
-</style>
