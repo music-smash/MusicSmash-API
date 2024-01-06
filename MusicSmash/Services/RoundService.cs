@@ -4,7 +4,7 @@ namespace MusicSmash.Services
 {
     public class RoundService
 	{
-		public Round GetRound(UserId userId)
+		public Round GetSavedRound(UserId userId)
 		{
 			return null;
 		}
@@ -13,5 +13,6 @@ namespace MusicSmash.Services
 		{
 			throw new NotImplementedException();
 		}
+
 	}
 } 
