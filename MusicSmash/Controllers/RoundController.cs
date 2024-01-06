@@ -1,4 +1,5 @@
-﻿using MusicSmash.Models;
+﻿using MusicSmash.Controllers.Exceptions;
+using MusicSmash.Models;
 using MusicSmash.Services;
 using System.Security.Cryptography.Xml;
 
@@ -6,27 +7,49 @@ namespace MusicSmash.Controllers
 {
 	public class RoundController
 	{
-		public readonly VoteController _voteController;
-		public readonly RoundService _roundService;
+        private readonly VoteController _voteController;
+        private readonly Events _eventsCollection;
+        private readonly RoundService _roundService;
 
-		public RoundController(VoteController voteController, RoundService roundService)
+		public RoundController(VoteController voteController, RoundService roundService, Events eventsCollection)
 		{
-			_voteController = voteController;
-			_roundService = roundService;
+            this._voteController = voteController;
+            this._eventsCollection = eventsCollection;
+            this._roundService = roundService;
 		}
 
-		public Round GetNextRound(Round previusRound)
+        public Round GetNextRound(Round previusRound)
+        {
+            var nextRound = GetNextRoundInternal(previusRound);
+            _eventsCollection.OnNewRoundLoaded(this, nextRound);
+            return nextRound;
+        }
+
+        private Round GetNextRoundInternal(Round previusRound)
 		{
-			return new Round()
+			try
 			{
-				Index = (previusRound?.Index ?? 0) + 1,
-				Games = _voteController.GetRandomCoupledAlbums(previusRound)
-					.Select((couple) => new Game()
-					{
-						Left = couple.left,
-						Right = couple.right
-					}).ToArray()
-			};
+                var albumPool = _voteController.GetRandomCoupledAlbums(previusRound);
+                return new Round()
+                {
+                    Index = (previusRound?.Index ?? 0) + 1,
+                    Games = albumPool
+                        .Select((couple) => new Game()
+                        {
+                            Left = couple.left,
+                            Right = couple.right
+                        }).ToArray()
+                };
+            }
+            catch (WinnerExceptions e)
+			{
+                return new Round()
+				{
+                    Index = (previusRound?.Index ?? 0) + 1,
+                    Games = new Game[] { FinishedGame.FromWinner(e.Winner) }
+                };
+			}
+
 		}
 
 		public Round GetOldRound()

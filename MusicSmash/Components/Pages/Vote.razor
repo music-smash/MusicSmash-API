@@ -7,6 +7,7 @@
 @inject VoteController voteController 
 @inject Api spotifyAPI
 @inject IHttpContextAccessor httpContext
+@inject Events eventsCollectior
 
 @if(isAuthenticated)
 {
@@ -55,7 +56,6 @@ else
         // Round finished
         roundController.SaveRound(CurrentRound);
         CurrentRound = roundController.GetNextRound(CurrentRound);
-
         return GetNextGame();
     }
 
