@@ -5,6 +5,7 @@
 @using MusicSmash.Controllers.Exceptions
 @using MusicSmash.Models
 @rendermode InteractiveServer
+@inject NavigationManager navigationManager
 @inject RoundController roundController
 @inject GameController gameController 
 @inject Api spotifyAPI
@@ -21,10 +22,8 @@
 }
 else
 {
-    <RedirectToPage Page="/" />
+    <RedirectToPage Page="/login" />
 }
-
-
 
 @code 
 {

@@ -1,7 +1,19 @@
 ﻿@page "/"
 @using Microsoft.AspNetCore.Components.Authorization
 @using MusicSmash.Components.Sub_Components
+@using MusicSmash.Controllers.Api.Spotify
 @using MusicSmash.Models
+@inject IHttpContextAccessor httpContext
+@inject Api spotifyAPI
+
+@if(isAuthenticated)
+{
+    <RedirectToPage Page="/vote" />
+}
+else
+{
+    <RedirectToPage Page="/login" />
+}
 
 <PageTitle>MusicMatch</PageTitle>
 
@@ -14,7 +26,7 @@
     </div>
     <div class="col text-center d-flex flex-column gap-2 bg-warning">
         <button type="button" class="btn btn-outline-primary">Statistiche</button>
-    </div
+    </div>
 </div>
 
 @code
@@ -23,4 +35,18 @@
     {
         return base.OnInitializedAsync();
     }
+
+    protected async Task<bool> ShouldRender()
+    {
+        string token = string.Empty;
+        if (!httpContext?.HttpContext?.Request.Cookies.TryGetValue("token", out token) ?? false)
+            return false;
+
+        var result = await spotifyAPI.GetUserProfileAsync(token).ConfigureAwait(false);
+        var isPremium = result.Product == "premium";
+
+        return true;
+    }
+
+    public bool isAuthenticated => ShouldRender().Result;
 }
