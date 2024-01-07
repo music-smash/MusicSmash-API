@@ -3,40 +3,24 @@
 @using MusicSmash.Components.Sub_Components
 @using MusicSmash.Controllers.Api.Spotify
 @using MusicSmash.Models
+@inject NavigationManager navigationManager
 @inject IHttpContextAccessor httpContext
 @inject Api spotifyAPI
 
-@if(isAuthenticated)
+@if (isAuthenticated)
 {
-    <RedirectToPage Page="/vote" />
+    <script>window.location.replace("/vote")</script>
 }
 else
 {
-    <RedirectToPage Page="/login" />
+    <script>window.location.replace("/login")</script>
 }
 
 <PageTitle>MusicMatch</PageTitle>
 
-<div class="row">
-    <div class="col text-center d-flex flex-column gap-2 bg-warning">
-        <button type="button" class="btn btn-outline-primary">Amici</button>
-    </div>
-    <div class="col text-center d-flex flex-column gap-2 bg-info">
-        <button type="button" class="btn btn-outline-primary">Profilo</button>
-    </div>
-    <div class="col text-center d-flex flex-column gap-2 bg-warning">
-        <button type="button" class="btn btn-outline-primary">Statistiche</button>
-    </div>
-</div>
-
 @code
 {
-    protected override Task OnInitializedAsync()
-    {
-        return base.OnInitializedAsync();
-    }
-
-    protected async Task<bool> ShouldRender()
+    protected async Task<bool> ControlRender()
     {
         string token = string.Empty;
         if (!httpContext?.HttpContext?.Request.Cookies.TryGetValue("token", out token) ?? false)
@@ -48,5 +32,5 @@ else
         return true;
     }
 
-    public bool isAuthenticated => ShouldRender().Result;
+    public bool isAuthenticated => ControlRender().Result;
 }
