@@ -3,17 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33801.468
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicSmash", "MusicSmash\MusicSmash.csproj", "{F2724351-0DCE-49E2-9E2A-F505C1757D3B}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicSmash.Contracts", "MusicSmash.Contracts\MusicSmash.Contracts.csproj", "{520982F6-BA6B-4067-A909-545F9DAD034E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicSmash.Score.Engine", "MusicSmash.Score.Engine\MusicSmash.Score.Engine.csproj", "{C916833E-9216-4D80-B82D-B986E9C3DFCD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicSmash.Score.Service", "MusicSmash.Score.Service\MusicSmash.Score.Service.csproj", "{48E130AB-B058-4A0A-A02D-BE0E579684B1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicSmash.RabbitMQ.Implementations", "MusicSmash.RabbitMQ.Implementations\MusicSmash.RabbitMQ.Implementations.csproj", "{53246888-8F23-4246-8503-B6B908D41CDE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicSmash.RabbitMQ.Implementations", "MusicSmash.RabbitMQ.Implementations\MusicSmash.RabbitMQ.Implementations.csproj", "{53246888-8F23-4246-8503-B6B908D41CDE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicSmash.PostgreSQL.Implemenations", "MusicSmash.PostgreSQL.Implemenations\MusicSmash.PostgreSQL.Implemenations.csproj", "{FF2BDB14-CD37-4B7F-BBA2-9E89432AA2E0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicSmash.PostgreSQL.Implemenations", "MusicSmash.PostgreSQL.Implemenations\MusicSmash.PostgreSQL.Implemenations.csproj", "{FF2BDB14-CD37-4B7F-BBA2-9E89432AA2E0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicSmash.Database.Interfaces", "MusicSmash.Database.Interfaces\MusicSmash.Database.Interfaces.csproj", "{4A6EA868-AA9E-40A1-987B-B84EB3D45622}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicSmash.API", "MusicSmash.API\MusicSmash.API.csproj", "{3CD5EABB-A39C-41F6-924A-B488F05D4D92}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,10 +23,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F2724351-0DCE-49E2-9E2A-F505C1757D3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F2724351-0DCE-49E2-9E2A-F505C1757D3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F2724351-0DCE-49E2-9E2A-F505C1757D3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F2724351-0DCE-49E2-9E2A-F505C1757D3B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{520982F6-BA6B-4067-A909-545F9DAD034E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{520982F6-BA6B-4067-A909-545F9DAD034E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{520982F6-BA6B-4067-A909-545F9DAD034E}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -45,6 +43,14 @@ Global
 		{FF2BDB14-CD37-4B7F-BBA2-9E89432AA2E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF2BDB14-CD37-4B7F-BBA2-9E89432AA2E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF2BDB14-CD37-4B7F-BBA2-9E89432AA2E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A6EA868-AA9E-40A1-987B-B84EB3D45622}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A6EA868-AA9E-40A1-987B-B84EB3D45622}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A6EA868-AA9E-40A1-987B-B84EB3D45622}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A6EA868-AA9E-40A1-987B-B84EB3D45622}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3CD5EABB-A39C-41F6-924A-B488F05D4D92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CD5EABB-A39C-41F6-924A-B488F05D4D92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CD5EABB-A39C-41F6-924A-B488F05D4D92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CD5EABB-A39C-41F6-924A-B488F05D4D92}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

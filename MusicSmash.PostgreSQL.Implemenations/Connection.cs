@@ -1,31 +1,18 @@
-﻿using Npgsql;
+﻿using MusicSmash.Database.Interfaces;
+using MusicSmash.Models;
+using Npgsql;
 
 namespace MusicSmash.PostgreSQL.Implemenations
 {
-    public class Connection : IDisposable
+    public class Connection : IConnection
     {
         private readonly NpgsqlDataSource _npgsqlDataSource;
 
-        internal Connection(NpgsqlDataSource npgsqlDataSource)
-        {
-            this._npgsqlDataSource = npgsqlDataSource;
-        }
+        internal Connection(NpgsqlDataSource npgsqlDataSource) => this._npgsqlDataSource = npgsqlDataSource;
 
-        public async Task<TResult> Execute<TResult>(ICommand<TResult> command)
+        public IRepository<T> Detach<T>()
         {
-            await using (var sqlCommand = _npgsqlDataSource.CreateCommand(command.Query))
-            {
-                if (command.Parameters.Any())
-                    foreach (var parameter in command.Parameters)
-                    {
-                        sqlCommand.Parameters.AddWithValue(parameter.Key, parameter.Value);
-                    }
-
-                await using(var reader = await sqlCommand.ExecuteReaderAsync())
-                {
-                    return command.Map(reader);
-                }
-            }
+            return new Repository(_npgsqlDataSource.OpenConnection()).Init<T>();
         }
 
         public void Dispose()

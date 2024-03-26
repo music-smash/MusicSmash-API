@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>bc10e345-c8f4-456e-8039-79523794c671</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MusicSmash.Contracts\MusicSmash.Contracts.csproj" />
+    <ProjectReference Include="..\MusicSmash.Database.Interfaces\MusicSmash.Database.Interfaces.csproj" />
+    <ProjectReference Include="..\MusicSmash.PostgreSQL.Implemenations\MusicSmash.PostgreSQL.Implemenations.csproj" />
+  </ItemGroup>
+
+</Project>

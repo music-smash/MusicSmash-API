@@ -7,12 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Npgsql" Version="8.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\MusicSmash.Contracts\MusicSmash.Contracts.csproj" />
-    <ProjectReference Include="..\MusicSmash.Database.Interfaces\MusicSmash.Database.Interfaces.csproj" />
   </ItemGroup>
 
 </Project>
