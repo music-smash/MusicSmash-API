@@ -1,3 +1,4 @@
+using MusicSmash.Database.Interfaces;
 using MusicSmash.Models;
 using MusicSmash.RabbitMQ.Implementations;
 using MusicSmash.Score.Engine;
@@ -9,12 +10,14 @@ namespace MusicSmash.Score.Service
         private readonly ILogger<Worker> _logger;
         private readonly QueueConnection _connection;
         private readonly ScoreEngine _scoreEngine;
+        private readonly IRepository<Album> _albumRepository;
 
-        public Worker(ILogger<Worker> logger)
+        public Worker(ILogger<Worker> logger, IConnection _dbconnection)
         {
             _logger = logger;
             _connection = QueueConnectionFactory.GetModel();
             _scoreEngine = new ScoreEngine();
+            _albumRepository = _dbconnection.Detach<Album>();
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -45,7 +48,12 @@ namespace MusicSmash.Score.Service
 
         private void UpdateAlbumScores(IDictionary<Album, int> albumsScoreDeltas)
         {
-            
+            foreach (var (album, scoreDelta) in albumsScoreDeltas)
+            {
+                var albumDbCopy = _albumRepository.Get(album.Id);
+                albumDbCopy.Score += scoreDelta;
+                _albumRepository.Upsert(albumDbCopy);
+            }
         }
     }
 }

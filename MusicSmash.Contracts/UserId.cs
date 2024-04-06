@@ -1,6 +1,6 @@
 ﻿namespace MusicSmash.Models
 {
-    public class UserId
+    public class User
     {
         public string Id { get; set; }
     }

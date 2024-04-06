@@ -30,17 +30,17 @@ namespace MusicSmash.PostgreSQL.Implemenations
             return ConnectionFactory.GetRepository<T>(this);
         }
 
-        protected IEnumerable<object> ExecuteQuery(string query)
+        protected IEnumerable<IDictionary<string, object>> ExecuteQuery(string query)
         {
             var cmd = _dbConnection.CreateCommand();
             cmd.CommandText = query;
             var reader = cmd.ExecuteReader();
-            int columnSize = reader.GetColumnSchema().Count;
+            var columns = reader.GetColumnSchema().Select(s => s.ColumnName).ToArray();
             while (reader.Read())
             {
-                var row = new object[columnSize];
+                var row = new object[columns.Length];
                 reader.GetValues(row);
-                yield return row;
+                yield return columns.Zip(row).ToDictionary();
             }
             reader.Close();
         }

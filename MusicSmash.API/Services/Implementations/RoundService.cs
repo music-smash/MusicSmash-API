@@ -1,21 +1,34 @@
-﻿using MusicSmash.API.Extensions;
+﻿using MusicSmash.API.Attributes;
+using MusicSmash.API.Controllers;
+using MusicSmash.API.Extensions;
 
 using MusicSmash.Database.Interfaces;
 using MusicSmash.Models;
 
 namespace MusicSmash.API.Services.Implementations
 {
-    public class RoundService(ILogger<RoundService> logger, IConnection connection) : IRoundService
+    public class RoundService(ILogger<RoundService> logger, IConnection connection) 
+        : IRoundService
     {
         private readonly ILogger<RoundService> _logger = logger;
-        private readonly IRepository<Round> _roundRepository = connection.Detach<Round>();
+        private readonly IRepository<Round.RoundDB> _roundRepository = connection.Detach<Round.RoundDB>();
         private readonly IRepository<Album> _albumRepository = connection.Detach<Album>();
 
-        public void SaveRound(Round round)
+        public void SaveRound(RoundController.RoundBase payload)
         {
             try
             {
-                _roundRepository.Upsert(round);
+                var round = new Round()
+                {
+                    Index = payload.Index,
+                    Games = payload.Games.Select(g => new Game()
+                    {
+                        Left = _albumRepository.Get(g.Left),
+                        Right = _albumRepository.Get(g.Right),
+                        Winner = _albumRepository.Get(g.Winner)
+                    }).ToArray()
+                };
+                //_roundRepository.Upsert(round);
             }
             catch (Exception e)
             {
@@ -35,7 +48,7 @@ namespace MusicSmash.API.Services.Implementations
 
                 var lastRound = playedRounds.OrderByDescending(r => r.Index).First();
 
-                var albumsPool = lastRound.Games.Select(g => g.Winner);
+                IEnumerable<Album> albumsPool = null;//lastRound.Games.Select(g => g.Winner);
 
                 return BuildRound(albumsPool, lastRound.Index + 1);
             }
@@ -75,5 +88,7 @@ namespace MusicSmash.API.Services.Implementations
                     }).ToArray()
             };
         }
+
+
     }
 }

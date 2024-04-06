@@ -20,8 +20,9 @@ namespace MusicSmash.PostgreSQL.Implemenations
 
         private static void BindRepositories()
         {
-            Bind<RoundRepository, Round>();
+            Bind<RoundRepository, Round.RoundDB>();
             Bind<AlbumRepository, Album>();
+            Bind<GameRepository, Game.GameDB>();
         }
 
         public static Connection GetConnection(string connectionString)

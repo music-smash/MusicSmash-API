@@ -15,6 +15,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MusicSmash.Contracts\MusicSmash.Contracts.csproj" />
+    <ProjectReference Include="..\MusicSmash.Database.Interfaces\MusicSmash.Database.Interfaces.csproj" />
+    <ProjectReference Include="..\MusicSmash.PostgreSQL.Implemenations\MusicSmash.PostgreSQL.Implemenations.csproj" />
     <ProjectReference Include="..\MusicSmash.RabbitMQ.Implementations\MusicSmash.RabbitMQ.Implementations.csproj" />
     <ProjectReference Include="..\MusicSmash.Score.Engine\MusicSmash.Score.Engine.csproj" />
   </ItemGroup>

@@ -2,8 +2,8 @@
 {
     public interface IRepository<T> : IRepository
     {
-        T Get(int id);
-        void Delete(int id);
+        T Get(string id);
+        void Delete(string id);
         T Upsert(T entity);
         T[] GetAll();
     }

@@ -15,6 +15,12 @@
 				2f 
 			);
 
+		public class RoundDB
+		{
+			public required string id { get; set; }
+            public required int Index { get; set; }
+			public required string userId { get; set; }
+        }
 	}
 
 	public enum RoundType

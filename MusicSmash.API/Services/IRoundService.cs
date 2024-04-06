@@ -1,10 +1,11 @@
-﻿using MusicSmash.Models;
+﻿using MusicSmash.API.Controllers;
+using MusicSmash.Models;
 
 namespace MusicSmash.API.Services
 {
     public interface IRoundService
     {
         Round GetNextRound(string userId);
-        void SaveRound(Round round);
+        void SaveRound(RoundController.RoundBase payload);
     }
 }
