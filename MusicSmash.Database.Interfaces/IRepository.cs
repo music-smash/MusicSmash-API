@@ -1,15 +1,19 @@
 ﻿namespace MusicSmash.Database.Interfaces
 {
-    public interface IRepository<T> : IRepository
+    public interface IRepository<T, J, Y> : IRepository
+        where T : Entity<J, Y>
+        where J : DBEntity<Y> 
     {
-        T Get(string id);
-        void Delete(string id);
-        T Upsert(T entity);
-        T[] GetAll();
+        J Get(Y id);
+        void Delete(Y id);
+        J Upsert(T entity);
+        J[] GetAll();
     }
 
     public interface IRepository
     {
-        IRepository<T> Init<T>();
+        IRepository<T, J, Y> Init<T, J, Y>()
+                    where T : Entity<J, Y>
+                    where J : DBEntity<Y>; 
     }
 }

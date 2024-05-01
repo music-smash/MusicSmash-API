@@ -10,44 +10,53 @@ namespace MusicSmash.PostgreSQL.Implemenations
 {
     internal class Repository : IRepository
     {
-        private readonly NpgsqlConnection _dbConnection;
+        private readonly NpgsqlDataSource _dataSource;
 
-        public Repository(Repository repository) : this(repository._dbConnection)
+        public Repository(Repository repository) : this(repository._dataSource)
         {
             
         }
 
-        public Repository(NpgsqlConnection dbConnection)
+        public Repository(NpgsqlDataSource dbConnection)
         {
-            _dbConnection = dbConnection;
-
-            if (_dbConnection.State != System.Data.ConnectionState.Open)
-                _dbConnection.Open();
+            _dataSource = dbConnection;
         }
 
-        public IRepository<T> Init<T>()
+        public IRepository<T, J, Y> Init<T, J, Y>()
+                where T : Entity<J, Y>
+                where J : DBEntity<Y>
         {
-            return ConnectionFactory.GetRepository<T>(this);
+            return ConnectionFactory.GetRepository<T, J, Y>(this);
+
         }
 
-        protected IEnumerable<IDictionary<string, object>> ExecuteQuery(string query)
+        internal IEnumerable<IDictionary<string, object>> ExecuteQueryWithResults(string query)
         {
-            var cmd = _dbConnection.CreateCommand();
-            cmd.CommandText = query;
-            var reader = cmd.ExecuteReader();
-            var columns = reader.GetColumnSchema().Select(s => s.ColumnName).ToArray();
-            while (reader.Read())
+            using(var conn = _dataSource.OpenConnection())
             {
-                var row = new object[columns.Length];
-                reader.GetValues(row);
-                yield return columns.Zip(row).ToDictionary();
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = query;
+                var reader = cmd.ExecuteReader();
+                var columns = reader.GetColumnSchema().Select(s => s.ColumnName).ToArray();
+                while (reader.Read())
+                {
+                    var row = new object[columns.Length];
+                    reader.GetValues(row);
+                    yield return columns.Zip(row).ToDictionary();
+                }
+                reader.Close();
             }
-            reader.Close();
         }
 
-        ~Repository()
+        internal int ExecuteQuery(string query)
         {
-            _dbConnection.Close();
+            using (var conn = _dataSource.OpenConnection())
+            {
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = query;
+                return cmd.ExecuteNonQuery();
+            }
+
         }
     }
 }

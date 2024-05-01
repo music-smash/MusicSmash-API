@@ -8,6 +8,8 @@ namespace MusicSmash.Database.Interfaces
 {
     public interface IConnection: IDisposable
     {
-        IRepository<T> Detach<T>();
+        IRepository<T, J, Y> Detach<T, J , Y>()
+                    where T : Entity<J, Y>
+                    where J : DBEntity<Y>;
     }
 }

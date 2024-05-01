@@ -8,6 +8,9 @@ using System.Linq;
 using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
+using static MusicSmash.Models.Album;
+using static MusicSmash.Models.Game;
+using static MusicSmash.Models.Round;
 
 namespace MusicSmash.PostgreSQL.Implemenations
 {
@@ -20,9 +23,9 @@ namespace MusicSmash.PostgreSQL.Implemenations
 
         private static void BindRepositories()
         {
-            Bind<RoundRepository, Round.RoundDB>();
-            Bind<AlbumRepository, Album>();
-            Bind<GameRepository, Game.GameDB>();
+            Bind<RoundRepository, Round, RoundDB, long>();
+            Bind<AlbumRepository, Album, AlbumDB, long>();
+            Bind<GameRepository, Game, GameDB, long>();
         }
 
         public static Connection GetConnection(string connectionString)
@@ -45,14 +48,19 @@ namespace MusicSmash.PostgreSQL.Implemenations
         }
 
         private static IDictionary<Type, Func<IRepository, IRepository>> keyValuePairs = new Dictionary<Type, Func<IRepository, IRepository>>();
-        private static void Bind<TRepo, T>() where TRepo : IRepository<T>
+        private static void Bind<TRepo, T, J, Y>() 
+            where TRepo : IRepository<T, J, Y>
+            where T : Entity<J, Y>
+            where J : DBEntity<Y>
         {
             keyValuePairs[typeof(T)] = (r) => Activator.CreateInstance(typeof(TRepo), r) as IRepository;
         }
 
-        public static IRepository<T> GetRepository<T>(IRepository repository)
+        public static IRepository<T, J, Y> GetRepository<T, J, Y>(IRepository repository)
+            where T : Entity<J, Y>
+            where J : DBEntity<Y>
         {
-            return keyValuePairs[typeof(T)](repository) as IRepository<T>;
+            return keyValuePairs[typeof(T)](repository) as IRepository<T, J, Y>;
         }
     }
 }

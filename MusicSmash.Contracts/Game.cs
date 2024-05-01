@@ -1,19 +1,23 @@
-﻿namespace MusicSmash.Models
+﻿
+using MusicSmash.Database.Interfaces;
+using static MusicSmash.Models.Game;
+
+namespace MusicSmash.Models
 {
-	public class Game
+	public class Game : Entity<GameDB, long>
 	{
+
 		public required Album Left { get; set; }
 		public required Album Right { get; set; }
 		public required Album Winner { get; set; }
 
 		public bool IsFinished => Winner != null;
 
-		public class GameDB
+		public class GameDB : DBEntity<long>
 		{
-            public required string id { get; set; }
-            public required string Left { get; set; }
-            public required string Right { get; set; }
-            public required string Winner { get; set; }
+            public required long Left { get; set; }
+            public required long Right { get; set; }
+            public required long? Winner { get; set; }
         }
 	}
 }

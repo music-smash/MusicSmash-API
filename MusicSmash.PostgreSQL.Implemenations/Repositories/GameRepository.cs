@@ -1,27 +1,23 @@
 ﻿using MusicSmash.Database.Interfaces;
 using MusicSmash.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static MusicSmash.Models.Game;
 
 namespace MusicSmash.PostgreSQL.Implemenations.Repositories
 {
-    internal class GameRepository : Repository, IRepository<Game.GameDB>
+    internal class GameRepository : Repository, IRepository<Game, GameDB, long>
     {
         public GameRepository(Repository repository) : base(repository)
         {
         }
 
-        public void Delete(string id)
+        public void Delete(long id)
         {
-            this.ExecuteQuery($"DELETE FROM games WHERE id = {id}");
+            this.ExecuteQueryWithResults($"DELETE FROM game WHERE id = {id}");
         }
 
-        public Game.GameDB Get(string id)
+        public GameDB Get(long id)
         {
-            var result = this.ExecuteQuery($"SELECT * FROM games WHERE id = {id}");
+            var result = this.ExecuteQueryWithResults($"SELECT * FROM game WHERE id = {id}");
             if (result.Count() == 0)
                 return null;
             if (result.Count() > 1)
@@ -29,35 +25,41 @@ namespace MusicSmash.PostgreSQL.Implemenations.Repositories
             return MapGame(result.Single());
         }
 
-        public Game.GameDB[] GetAll()
+        public GameDB[] GetAll()
         {
-            var result = this.ExecuteQuery("SELECT * FROM games");
+            var result = this.ExecuteQueryWithResults("SELECT * FROM game");
             return result.Select(MapGame).ToArray();
         }
 
-        public Game.GameDB Upsert(Game.GameDB entity)
+        public GameDB Upsert(Game entity)
         {
-            var result = this.ExecuteQuery($"SELECT * FROM games WHERE id = {entity.id}");
+            var result = this.ExecuteQueryWithResults($"SELECT * FROM game WHERE id = {entity.Id}").ToList();
+
+            var equal = "="; var isNull = "IS";
 
             if (result.Count() == 0)
-                this.ExecuteQuery($"INSERT INTO games (id, left, right, winner) VALUES ({entity.id}, {entity.Left}, {entity.Right}, {entity.Winner})");
+                this.ExecuteQuery($"INSERT INTO game (leftalbumid, rightalbumid, winneralbumid) VALUES ({entity.Left.GetId()}, {entity.Right.GetId()}, {entity.Winner?.GetId()})");
             else if (result.Count() > 1)
                 throw new Exception("More than one game with the same id");
             else
-                this.ExecuteQuery($"UPDATE games SET left = {entity.Left}, right = {entity.Right}, winner = {entity.Winner} WHERE id = {entity.id}");
+                this.ExecuteQuery($"UPDATE game SET leftalbumid = {entity.Left.GetId()}, rightalbumid = {entity.Right.GetId()}, winneralbumid = {entity.Winner?.GetId()} WHERE id = {entity.Id}");
 
-            var resultAfter = this.ExecuteQuery($"SELECT * FROM games WHERE id = {entity.id}");
-            return MapGame(resultAfter.Single());
+            var resultAfter = this.ExecuteQueryWithResults($"SELECT * FROM game WHERE leftalbumid {(entity.Left.Id > 0 ? equal : isNull)} {entity.Left.GetId()} AND rightalbumid {(entity.Right.Id > 0 ? equal : isNull)} {entity.Right.GetId()} AND winneralbumid {((entity.Winner?.Id ?? -1) > 0 ? equal : isNull)} {entity.Winner?.GetId()} ORDER BY id DESC").ToList();
+            return MapGame(resultAfter.First());
         }
 
-        private Game.GameDB MapGame(IDictionary<string, object> dictionary)
+        private GameDB MapGame(IDictionary<string, object> dictionary)
         {
-            return new Game.GameDB()
+            foreach (var key in dictionary.Keys) //normalizing null opr empty ids
             {
-                id = dictionary["id"]?.ToString(),
-                Left = dictionary["left"]?.ToString(),
-                Right = dictionary["right"]?.ToString(),
-                Winner = dictionary["winner"]?.ToString()
+                dictionary[key] = string.IsNullOrWhiteSpace(dictionary[key]?.ToString()) ? "-1" : dictionary[key];
+            }
+            return new GameDB()
+            {
+                Id = long.Parse(dictionary["id"].ToString()),
+                Left = long.Parse(dictionary["leftalbumid"]?.ToString()),
+                Right = long.Parse(dictionary["rightalbumid"]?.ToString()),
+                Winner = long.Parse(dictionary["winneralbumid"]?.ToString())
             };
         }
     }

@@ -6,23 +6,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static MusicSmash.Models.Round;
 
 namespace MusicSmash.PostgreSQL.Implemenations.Repositories
 {
-    internal class RoundRepository : Repository, IRepository<Round.RoundDB>
+    internal class RoundRepository : Repository, IRepository<Round, RoundDB, long>
     {
         public RoundRepository(Repository repository) : base(repository)
         {
         }
 
-        public void Delete(string id)
+        public void Delete(long id)
         {
-            this.ExecuteQuery($"DELETE FROM rounds WHERE id = {id}");
+            this.ExecuteQueryWithResults($"DELETE FROM round WHERE id = {id}");
         }
 
-        public Round.RoundDB Get(string id)
+        public RoundDB Get(long id)
         {
-            var result = this.ExecuteQuery($"SELECT * FROM rounds WHERE id = {id}");
+            var result = this.ExecuteQueryWithResults($"SELECT * FROM round WHERE id = {id}");
             if (result.Count() == 0)
                 return null;
             if (result.Count() > 1)
@@ -30,25 +31,33 @@ namespace MusicSmash.PostgreSQL.Implemenations.Repositories
             return MapRound(result.Single());
         }
 
-        public Round.RoundDB[] GetAll()
+        public RoundDB[] GetAll()
         {
-            var result = this.ExecuteQuery("SELECT * FROM rounds");
+            var result = this.ExecuteQueryWithResults("SELECT * FROM round");
             return result.Select(MapRound).ToArray();
         }
 
-        public Round.RoundDB Upsert(Round.RoundDB entity)
+        public RoundDB Upsert(Round entity)
         {
-            var result = this.ExecuteQuery($"SELECT * FROM rounds WHERE id = {entity.Index}");
+            var result = this.ExecuteQueryWithResults($"SELECT * FROM round WHERE id = {entity.Index}");
 
             if (result.Count() == 0)
-                this.ExecuteQuery($"INSERT INTO rounds (id, index, userid) VALUES ({entity.id}, {entity.Index}, {entity.userId})");
+                this.ExecuteQuery($"INSERT INTO round (index, userid) VALUES ({entity.Index}, '{entity.Owner.Id}')");
             else if (result.Count() > 1)
                 throw new Exception("More than one round with the same id");
             else
-                this.ExecuteQuery($"UPDATE rounds SET index = {entity.Index}, userid = {entity.userId} WHERE id = {entity.id}");
+                this.ExecuteQuery($"UPDATE round SET index = {entity.Index}, userid = '{entity.Owner.Id}' WHERE id = {entity.Id}");
 
-            var resultAfter = this.ExecuteQuery($"SELECT * FROM rounds WHERE id = {entity.id}");
-            return MapRound(resultAfter.Single());
+            var resultAfter = this.ExecuteQueryWithResults($"SELECT * FROM round WHERE index = {entity.Index} AND userid = '{entity.Owner.Id}' ORDER BY id DESC").First();
+
+            var round = MapRound(resultAfter);
+
+            foreach (var game in entity.Games)
+            {
+                this.ExecuteQuery($"INSERT INTO gameround (gameid, roundid) VALUES ({game.Id}, {round.Id})");
+            }
+
+            return round;
         }
 
 
@@ -56,8 +65,8 @@ namespace MusicSmash.PostgreSQL.Implemenations.Repositories
         {
             return new Round.RoundDB()
             {
-                id = dictionary["id"].ToString(),
-                Index = (int)dictionary["index"],
+                Id = long.Parse(dictionary["id"].ToString()),
+                Index = int.Parse(dictionary["index"].ToString()),
                 userId = dictionary["userid"].ToString(),
             };
         }

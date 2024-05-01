@@ -10,9 +10,11 @@ namespace MusicSmash.PostgreSQL.Implemenations
 
         internal Connection(NpgsqlDataSource npgsqlDataSource) => this._npgsqlDataSource = npgsqlDataSource;
 
-        public IRepository<T> Detach<T>()
+        public IRepository<T, J, Y> Detach<T, J, Y>()
+            where T : Entity<J, Y>
+            where J : DBEntity<Y>
         {
-            return new Repository(_npgsqlDataSource.OpenConnection()).Init<T>();
+            return new Repository(_npgsqlDataSource).Init<T, J, Y>();
         }
 
         public void Dispose()

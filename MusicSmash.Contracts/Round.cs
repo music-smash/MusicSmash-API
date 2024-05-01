@@ -1,10 +1,15 @@
-﻿namespace MusicSmash.Models
+﻿using MusicSmash.Database.Interfaces;
+using static MusicSmash.Models.Round;
+
+namespace MusicSmash.Models
 {
-	public class Round
+	public class Round : Entity<RoundDB, long>
 	{
 		public required int Index { get; set; }
 
 		public required Game[] Games { get; set; }
+
+		public required User Owner { get; set; }
 
 		public RoundType RoundType => 
 			(RoundType)(int)
@@ -15,9 +20,8 @@
 				2f 
 			);
 
-		public class RoundDB
+		public class RoundDB : DBEntity<long>
 		{
-			public required string id { get; set; }
             public required int Index { get; set; }
 			public required string userId { get; set; }
         }
@@ -32,4 +36,5 @@
         EighthFinal= 4,
 		Undefined = 5
 	}
+
 }

@@ -6,6 +6,6 @@ namespace MusicSmash.API.Services
     public interface IRoundService
     {
         Round GetNextRound(string userId);
-        void SaveRound(RoundController.RoundBase payload);
+        void SaveRound(RoundController.RoundBase payload, string userId);
     }
 }

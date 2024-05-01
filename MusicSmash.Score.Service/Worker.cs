@@ -1,32 +1,25 @@
 using MusicSmash.Database.Interfaces;
 using MusicSmash.Models;
+using MusicSmash.PostgreSQL.Implemenations.Mediators;
 using MusicSmash.RabbitMQ.Implementations;
 using MusicSmash.Score.Engine;
+using static MusicSmash.Models.Album;
 
 namespace MusicSmash.Score.Service
 {
-    public class Worker : BackgroundService
+    public class Worker(ILogger<Worker> logger, IConnection _dbconnection) : BackgroundService
     {
-        private readonly ILogger<Worker> _logger;
-        private readonly QueueConnection _connection;
-        private readonly ScoreEngine _scoreEngine;
-        private readonly IRepository<Album> _albumRepository;
-
-        public Worker(ILogger<Worker> logger, IConnection _dbconnection)
-        {
-            _logger = logger;
-            _connection = QueueConnectionFactory.GetModel();
-            _scoreEngine = new ScoreEngine();
-            _albumRepository = _dbconnection.Detach<Album>();
-        }
+        private readonly QueueConnection _connection = QueueConnectionFactory.GetModel();
+        private readonly ScoreEngine _scoreEngine = new ScoreEngine();
+        private readonly IRepository<Album, AlbumDB, long> _albumRepository = _dbconnection.Detach<Album, AlbumDB, long>();
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                if (_logger.IsEnabled(LogLevel.Information))
+                if (logger.IsEnabled(LogLevel.Information))
                 {
-                    _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+                    logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
                 }
 
                 var roundMonad = _connection.DeQueue<Round>();
@@ -40,7 +33,7 @@ namespace MusicSmash.Score.Service
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error processing round {round}", round.Index);
+                    logger.LogError(ex, "Error processing round {round}", round.Index);
                     roundMonad.Nack();
                 }
             }
@@ -48,11 +41,12 @@ namespace MusicSmash.Score.Service
 
         private void UpdateAlbumScores(IDictionary<Album, int> albumsScoreDeltas)
         {
+            var mediator = new AlbumMediator(_dbconnection);
             foreach (var (album, scoreDelta) in albumsScoreDeltas)
             {
                 var albumDbCopy = _albumRepository.Get(album.Id);
                 albumDbCopy.Score += scoreDelta;
-                _albumRepository.Upsert(albumDbCopy);
+                _albumRepository.Upsert(mediator.Mediate(albumDbCopy));
             }
         }
     }

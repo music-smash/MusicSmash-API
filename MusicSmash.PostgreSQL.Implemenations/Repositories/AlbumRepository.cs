@@ -5,23 +5,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static MusicSmash.Models.Album;
 
 namespace MusicSmash.PostgreSQL.Implemenations.Repositories
 {
-    internal class AlbumRepository : Repository, IRepository<Album>
+    internal class AlbumRepository : Repository, IRepository<Album, AlbumDB, long>
     {
         public AlbumRepository(Repository repository) : base(repository)
         {
         }
 
-        public void Delete(string id)
+        public void Delete(long id)
         {
-            this.ExecuteQuery($"DELETE FROM albums WHERE id = {id}");
+            this.ExecuteQueryWithResults($"DELETE FROM album WHERE id = {id}");
         }
 
-        public Album Get(string id)
+        public AlbumDB Get(long id)
         {
-            var result = this.ExecuteQuery($"SELECT * FROM albums WHERE id = {id}");
+            var result = this.ExecuteQueryWithResults($"SELECT * FROM album WHERE id = {id}");
 
             if (result.Count() == 0)
                 return null;
@@ -30,36 +31,35 @@ namespace MusicSmash.PostgreSQL.Implemenations.Repositories
             return MapAlbum(result.Single());
         }
 
-        public Album[] GetAll()
+        public AlbumDB[] GetAll()
         {
-            var result = this.ExecuteQuery("SELECT * FROM albums");
+            var result = this.ExecuteQueryWithResults("SELECT * FROM album");
             return result.Select(MapAlbum).ToArray();
         }
 
-        public Album Upsert(Album entity)
+        public AlbumDB Upsert(Album entity)
         {
-            var result = this.ExecuteQuery($"SELECT * FROM albums WHERE id = {entity.Id}");
+            var result = this.ExecuteQueryWithResults($"SELECT * FROM album WHERE id = {entity.Id}");
 
             if (result.Count() == 0)
-                this.ExecuteQuery($"INSERT INTO albums (id, name, score, release_date, cover) VALUES ({entity.Id}, {entity.Name}, {entity.Score}, {entity.ReleaseDate}, {entity.Cover})");
+                this.ExecuteQuery($"INSERT INTO album (name, score, release_date, cover) VALUES ('{entity.Name}', {entity.Score}, '{entity.Cover}')");
             else if (result.Count() > 1)
                 throw new Exception("More than one album with the same id");
             else 
-                this.ExecuteQuery($"UPDATE albums SET name = {entity.Name}, score = {entity.Score}, release_date = {entity.ReleaseDate}, cover = {entity.Cover} WHERE id = {entity.Id}");
+                this.ExecuteQuery($"UPDATE album SET name = '{entity.Name}', score = {entity.Score}, cover = '{entity.Cover}' WHERE id = {entity.Id}");
             
-            var resultAfter = this.ExecuteQuery($"SELECT * FROM albums WHERE id = {entity.Id}");
-            return MapAlbum(resultAfter.Single());
+            var resultAfter = this.ExecuteQueryWithResults($"SELECT * FROM album WHERE name = '{entity.Name}'");
+            return MapAlbum(resultAfter.First());
         }
 
 
-        private static Album MapAlbum(IDictionary<string, object> entry)
+        private static AlbumDB MapAlbum(IDictionary<string, object> entry)
         {
-            return new Album()
+            return new AlbumDB()
             {
-                Id = entry["id"].ToString(),
+                Id = long.Parse(entry["id"].ToString()),
                 Name = entry["name"].ToString(),
                 Score = int.Parse(entry["score"].ToString()),
-                ReleaseDate = entry["release_date"].ToString(),
                 Cover = entry["cover"].ToString()
             };
         }
